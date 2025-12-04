@@ -1,122 +1,161 @@
-const path = require("node:path");
-const { Pool } = require("pg");
-const express = require("express");
-const session = require("express-session");
-const passport = require("passport");
-const bcrypt = require("bcryptjs");
-const LocalStrategy = require("passport-local").Strategy;
+import express from "express";
+import session from "express-session";
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
+import connectPgSimple from "connect-pg-simple";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const pool = new Pool({
-  // add your configuration
-});
+// Import database pool and queries
+import pool from "./db/pool.js";
+import * as queries from "./db/queries.js";
+import { checkDatabase, initDatabase } from "./db/init.js";
+
+// Import controllers
+import * as controller from "./controllers/controller.js";
+
+// Load environment variables
+dotenv.config();
+
+// ES module __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+// View engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.use(session({ secret: "cats", resave: false, saveUninitialized: false }));
-app.use(passport.session());
-app.use(express.urlencoded({ extended: false }));
+// Session configuration with PostgreSQL store
+const PgSession = connectPgSimple(session);
 
-app.get("/", (req, res) => res.render("index"));
-
-passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      const { rows } = await pool.query(
-        "SELECT * FROM users WHERE username = $1",
-        [username]
-      );
-      const user = rows[0];
-
-      if (!user) {
-        return done(null, false, { message: "Incorrect username" });
-      }
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
-        return done(null, false, { message: "Incorrect password" });
-      }
-
-      return done(null, user);
-    } catch (err) {
-      return done(err);
-    }
+app.use(
+  session({
+    store: new PgSession({
+      pool: pool,
+      tableName: "sessions",
+    }),
+    secret:
+      process.env.SESSION_SECRET || "your-secret-key-change-in-production",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      secure: process.env.NODE_ENV === "production",
+    },
   })
 );
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Body parser
+app.use(express.urlencoded({ extended: false }));
+
+// Make user available in all templates
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
 });
 
+// Passport Local Strategy
+passport.use(
+  new LocalStrategy(
+    { usernameField: "email" }, // Use email as username
+    async (email, password, done) => {
+      try {
+        const user = await queries.findUserByEmail(email);
+
+        if (!user) {
+          return done(null, false, { message: "Incorrect email" });
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+          return done(null, false, { message: "Incorrect password" });
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
+    }
+  )
+);
+
+// Serialize user for session
+passport.serializeUser((user, done) => {
+  done(null, user.user_id);
+});
+
+// Deserialize user from session
 passport.deserializeUser(async (id, done) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [
-      id,
-    ]);
-    const user = rows[0];
-
+    const user = await queries.findUserById(id);
     done(null, user);
   } catch (err) {
     done(err);
   }
 });
 
-app.get("/sign-up", (req, res) => res.render("sign-up-form"));
+// Routes
+app.get("/", controller.getHome);
 
-app.post("/sign-up", async (req, res, next) => {
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    await pool.query("INSERT INTO users (username, password) VALUES ($1, $2)", [
-      req.body.username,
-      hashedPassword,
-    ]);
-    res.redirect("/");
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
+// Auth routes
+app.get("/signup", controller.getSignup);
+app.post("/signup", controller.postSignup);
+app.get("/login", controller.getLogin);
 app.post(
-  "/log-in",
+  "/login",
   passport.authenticate("local", {
     successRedirect: "/",
-    failureRedirect: "/",
+    failureRedirect: "/login",
   })
 );
+app.get("/logout", controller.getLogout);
 
-app.get("/", (req, res) => {
-  res.render("index", { user: req.user });
-});
+// Membership routes
+app.get("/join-club", controller.getJoinClub);
+app.post("/join-club", controller.postJoinClub);
 
-app.get("/log-out", (req, res, next) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
+// Message routes
+app.get("/messages", controller.getAllMessages);
+app.get("/messages/new", controller.getCreateMessage);
+app.post("/messages/new", controller.createMessage);
+app.get("/messages/:id", controller.getMessageById);
+app.post("/messages/:id/delete", controller.deleteMessage);
+
+// User routes
+app.get("/profile", controller.getUserProfile);
+
+// Admin routes
+app.get("/admin", controller.getAdminDashboard);
+
+// Initialize database and start server
+const startServer = async () => {
+  try {
+    // Check if database exists, initialize if needed
+    const dbExists = await checkDatabase();
+    if (!dbExists) {
+      console.log("🔄 Database not found, initializing...");
+      await initDatabase();
+    } else {
+      console.log("✅ Database connection verified");
     }
-    res.redirect("/");
-  });
-});
 
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  next();
-});
-
-const session = require("express-session");
-
-app.use(
-  session({
-    store: new (require("connect-pg-simple")(session))({}),
-    secret: process.env.secret,
-    resave: false,
-    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
-  })
-);
-
-app.listen(3000, (error) => {
-  if (error) {
-    throw error;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`📊 Environment: ${process.env.NODE_ENV || "development"}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+    process.exit(1);
   }
-  console.log("app listening on port 3000!");
-});
+};
+
+startServer();
