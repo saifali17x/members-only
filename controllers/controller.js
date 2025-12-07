@@ -12,7 +12,6 @@ export const getHome = async (req, res) => {
     res.render("index", {
       stats,
       messages: messages.slice(0, 10),
-      user: req.user,
     });
   } catch (error) {
     console.error("Error loading home page:", error);
@@ -114,7 +113,6 @@ export const getAllMessages = async (req, res) => {
 
     res.render("messages/list", {
       messages,
-      user: req.user,
     });
   } catch (error) {
     console.error("Error fetching messages:", error);
@@ -139,7 +137,6 @@ export const getMessageById = async (req, res) => {
 
     res.render("messages/detail", {
       message,
-      user: req.user,
     });
   } catch (error) {
     console.error("Error fetching message:", error);
@@ -192,12 +189,10 @@ export const getUserProfile = async (req, res) => {
       return res.redirect("/login");
     }
 
-    const user = await queries.findUserById(req.user.user_id);
     const userMessages = await queries.getMessagesByUserId(req.user.user_id);
     const messageCount = await queries.getUserMessageCount(req.user.user_id);
 
     res.render("users/profile", {
-      user,
       messages: userMessages,
       messageCount,
     });

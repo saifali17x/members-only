@@ -47,8 +47,7 @@ app.use(
       pool: pool,
       tableName: "sessions",
     }),
-    secret:
-      process.env.SESSION_SECRET || "your-secret-key-change-in-production",
+    secret: process.env.SESSION_SECRET || "cats123",
     resave: false,
     saveUninitialized: false,
     cookie: {

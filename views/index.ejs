@@ -30,17 +30,17 @@
                 <a href="/messages" class="px-4 py-2 rounded-lg transition-colors" style="color: #E2E8F0;"
                     onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
                     onmouseout="this.style.backgroundColor='transparent'">Messages</a>
-                <% if (user) { %>
+                <% if (currentUser) { %>
                     <a href="/profile" class="px-4 py-2 rounded-lg transition-colors" style="color: #E2E8F0;"
                         onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
                         onmouseout="this.style.backgroundColor='transparent'">Profile</a>
-                    <% if (!user.is_member) { %>
+                    <% if (!currentUser.is_member) { %>
                         <a href="/join-club" class="px-4 py-2 rounded-lg transition-colors" style="color: #E2E8F0;"
                             onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
                             onmouseout="this.style.backgroundColor='transparent'">Join
                             Club</a>
                         <% } %>
-                            <% if (user.is_admin) { %>
+                            <% if (currentUser.is_admin) { %>
                                 <a href="/admin" class="px-4 py-2 rounded-lg transition-colors" style="color: #E2E8F0;"
                                     onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
                                     onmouseout="this.style.backgroundColor='transparent'">Admin</a>
@@ -63,7 +63,7 @@
         </div>
     </nav>
 
-    <% if (!user) { %>
+    <% if (!currentUser) { %>
         <div class="py-20 px-5 text-center"
             style="background: linear-gradient(135deg, #38BDF8 0%, #F472B6 100%); color: #E2E8F0;">
             <h2 class="text-5xl font-bold mb-5">Welcome to Members Only Club</h2>
@@ -82,7 +82,7 @@
         <% } %>
 
             <div class="max-w-6xl mx-auto my-10 px-5">
-                <% if (user && !user.is_member) { %>
+                <% if (currentUser && !currentUser.is_member) { %>
                     <div class="rounded-lg p-8 mb-8 text-center shadow-md"
                         style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);">
                         <h3 class="text-2xl font-bold mb-2" style="color: #FBB936;">🔐 Unlock Full Access!</h3>
@@ -117,7 +117,7 @@
 
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-3xl font-bold" style="color: #E2E8F0;">Recent Messages</h2>
-                            <% if (user) { %>
+                            <% if (currentUser) { %>
                                 <a href="/messages/new"
                                     class="px-6 py-3 rounded-lg font-semibold hover:-translate-y-0.5 transition-all glow-effect"
                                     style="background-color: #38BDF8; color: #0F172A;">✏️
@@ -139,7 +139,7 @@
                                         <div class="flex justify-between items-center pt-4 border-t text-sm"
                                             style="border-color: #334155;">
                                             <div style="color: #94A3B8;">
-                                                <% if (user && user.is_member && message.first_name) { %>
+                                                <% if (currentUser && currentUser.is_member && message.first_name) { %>
                                                     <span class="font-semibold" style="color: #38BDF8;">
                                                         👤 <%= message.first_name %>
                                                             <%= message.last_name %>
@@ -153,7 +153,7 @@
                                                         <span class="italic">🔒 Anonymous</span>
                                                         <% } %>
                                             </div>
-                                            <% if (user && user.is_admin) { %>
+                                            <% if (currentUser && currentUser.is_admin) { %>
                                                 <form action="/messages/<%= message.message_id %>/delete" method="POST"
                                                     class="inline" onsubmit="return confirm('Delete this message?')">
                                                     <button type="submit" class="px-4 py-2 rounded-lg transition-colors"

@@ -31,7 +31,7 @@
                 onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
                 onmouseout="this.style.backgroundColor='transparent'">← Back to Messages</a>
             <div class="flex gap-5">
-                <% if (user) { %>
+                <% if (currentUser) { %>
                     <a href="/profile" class="px-4 py-2 rounded-lg transition-colors" style="color: #E2E8F0;"
                         onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
                         onmouseout="this.style.backgroundColor='transparent'">Profile</a>
@@ -54,7 +54,7 @@
             </h1>
 
             <div class="py-4 mb-8 border-b-2 text-base" style="border-color: #334155; color: #94A3B8;">
-                <% if (user && user.is_member && message.first_name) { %>
+                <% if (currentUser && currentUser.is_member && message.first_name) { %>
                     <span>Posted by </span>
                     <span class="font-semibold" style="color: #38BDF8;">
                         <%= message.first_name %>
@@ -76,7 +76,7 @@
                     style="background-color: #334155; color: #E2E8F0;">←
                     All Messages</a>
 
-                <% if (user && user.is_admin) { %>
+                <% if (currentUser && currentUser.is_admin) { %>
                     <form action="/messages/<%= message.message_id %>/delete" method="POST" class="inline"
                         onsubmit="return confirm('Are you sure you want to delete this message?')">
                         <button type="submit"
