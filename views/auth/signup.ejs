@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Members Only Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .glow-effect:hover {
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
+        }
+
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-5" style="background-color: #0F172A;">
+    <div class="rounded-lg shadow-2xl p-10 max-w-lg w-full" style="background-color: #1E293B;">
+        <h1 class="text-3xl font-bold mb-2" style="color: #E2E8F0;">Join the Club</h1>
+        <p class="mb-8" style="color: #94A3B8;">Create your account to get started</p>
+
+        <% if (typeof error !=='undefined' && error) { %>
+            <div class="p-3 rounded-lg mb-5 border-l-4"
+                style="background-color: rgba(244, 114, 182, 0.1); color: #F472B6; border-color: #F472B6;">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <form action="/signup" method="POST">
+                    <div class="mb-5">
+                        <label for="firstName" class="block mb-2 font-medium" style="color: #E2E8F0;">First Name</label>
+                        <input type="text" id="firstName" name="firstName"
+                            value="<%= typeof formData !== 'undefined' ? formData.firstName || '' : '' %>" required
+                            class="w-full p-3 border-2 rounded-lg text-base focus:outline-none transition-all input-glow"
+                            style="background-color: #0F172A; border-color: #334155; color: #E2E8F0;">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="lastName" class="block mb-2 font-medium" style="color: #E2E8F0;">Last Name</label>
+                        <input type="text" id="lastName" name="lastName"
+                            value="<%= typeof formData !== 'undefined' ? formData.lastName || '' : '' %>" required
+                            class="w-full p-3 border-2 rounded-lg text-base focus:outline-none transition-all input-glow"
+                            style="background-color: #0F172A; border-color: #334155; color: #E2E8F0;">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="email" class="block mb-2 font-medium" style="color: #E2E8F0;">Email</label>
+                        <input type="email" id="email" name="email"
+                            value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>" required
+                            class="w-full p-3 border-2 rounded-lg text-base focus:outline-none transition-all input-glow"
+                            style="background-color: #0F172A; border-color: #334155; color: #E2E8F0;">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="password" class="block mb-2 font-medium" style="color: #E2E8F0;">Password</label>
+                        <input type="password" id="password" name="password" minlength="6" required
+                            class="w-full p-3 border-2 rounded-lg text-base focus:outline-none transition-all input-glow"
+                            style="background-color: #0F172A; border-color: #334155; color: #E2E8F0;">
+                        <small class="text-sm" style="color: #94A3B8;">Must be at least 6 characters with uppercase,
+                            lowercase,
+                            and number</small>
+                    </div>
+                    <div class="mb-5">
+                        <label for="confirmPassword" class="block mb-2 font-medium" style="color: #E2E8F0;">Confirm
+                            Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" minlength="6" required
+                            class="w-full p-3 border-2 rounded-lg text-base focus:outline-none transition-all input-glow"
+                            style="background-color: #0F172A; border-color: #334155; color: #E2E8F0;">
+                    </div>
+
+                    <div class="mb-5">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="isAdmin" name="isAdmin" <%=typeof formData !=='undefined' &&
+                                formData.isAdmin==='on' ? 'checked' : '' %>
+                            class="w-5 h-5 cursor-pointer">
+                            <label for="isAdmin" class="font-medium cursor-pointer" style="color: #E2E8F0;">Register as
+                                Admin</label>
+                        </div>
+                        <small class="text-sm" style="color: #94A3B8;">Check this if you want admin privileges</small>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full p-4 rounded-lg text-base font-semibold hover:-translate-y-0.5 transition-all glow-effect"
+                        style="background-color: #38BDF8; color: #0F172A;">Create
+                        Account</button>
+                </form>
+
+                <div class="text-center mt-5" style="color: #94A3B8;">
+                    Already have an account? <a href="/login" class="font-semibold hover:underline"
+                        style="color: #38BDF8;">Log
+                        in</a>
+                </div>
+    </div>
+</body>
+
+</html>

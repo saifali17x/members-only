@@ -4,10 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Members Only Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+    </style>
 </head>
 
-<body>
-    <h1>Error!</h1>
+<body class="min-h-screen flex items-center justify-center p-5" style="background-color: #0F172A;">
+    <div class="rounded-lg shadow-2xl p-12 max-w-2xl w-full text-center glow-effect" style="background-color: #1E293B;">
+        <div class="text-8xl mb-5">⚠️</div>
+        <h1 class="text-3xl font-bold mb-4" style="color: #F472B6;">Oops! Something went wrong</h1>
+
+        <% if (typeof error !=='undefined' && error) { %>
+            <div class="text-lg leading-relaxed mb-8 p-5 rounded-lg border-l-4"
+                style="color: #E2E8F0; background-color: #0F172A; border-color: #F472B6;">
+                <%= error %>
+            </div>
+            <% } else { %>
+                <div class="text-lg leading-relaxed mb-8 p-5 rounded-lg border-l-4"
+                    style="color: #E2E8F0; background-color: #0F172A; border-color: #F472B6;">
+                    An unexpected error occurred. Please try again or contact support if the problem persists.
+                </div>
+                <% } %>
+
+                    <% if (typeof status !=='undefined' && status) { %>
+                        <p class="text-sm mb-8" style="color: #94A3B8;">Error Code: <%= status %>
+                        </p>
+                        <% } %>
+
+                            <div class="flex gap-4 justify-center flex-wrap">
+                                <a href="javascript:history.back()"
+                                    class="px-6 py-3 rounded-lg font-semibold hover:-translate-y-0.5 transition-all"
+                                    style="background-color: #334155; color: #E2E8F0;">←
+                                    Go Back</a>
+                                <a href="/"
+                                    class="px-6 py-3 rounded-lg font-semibold hover:-translate-y-0.5 transition-all glow-effect"
+                                    style="background-color: #38BDF8; color: #0F172A;">🏠
+                                    Home</a>
+                            </div>
+    </div>
 </body>
 
 </html>

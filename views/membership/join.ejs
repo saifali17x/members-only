@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Club - Members Only</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .glow-effect:hover {
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
+        }
+
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-5" style="background-color: #0F172A;">
+    <div class="rounded-lg shadow-2xl p-10 max-w-lg w-full" style="background-color: #1E293B;">
+        <h1 class="text-3xl font-bold mb-2" style="color: #E2E8F0;">🔐 Join the Members Club</h1>
+        <p class="mb-8 leading-relaxed" style="color: #94A3B8;">Enter the secret passcode to become a member and unlock
+            exclusive
+            features!</p>
+
+        <div class="p-5 rounded-lg mb-8 border-l-4"
+            style="background-color: rgba(56, 189, 248, 0.1); border-color: #38BDF8;">
+            <h3 class="text-lg font-semibold mb-2" style="color: #38BDF8;">✨ Member Benefits</h3>
+            <p class="leading-relaxed" style="color: #E2E8F0;">
+                • See who wrote each message<br>
+                • View message timestamps<br>
+                • Access member profiles<br>
+                • Full community participation
+            </p>
+        </div>
+
+        <% if (typeof error !=='undefined' && error) { %>
+            <div class="p-3 rounded-lg mb-5 border-l-4"
+                style="background-color: rgba(244, 114, 182, 0.1); color: #F472B6; border-color: #F472B6;">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <form action="/join-club" method="POST">
+                    <div class="mb-5">
+                        <label for="passcode" class="block mb-2 font-medium" style="color: #E2E8F0;">Secret
+                            Passcode</label>
+                        <input type="text" id="passcode" name="passcode" placeholder="Enter the secret code" required
+                            autofocus
+                            class="w-full p-3 border-2 rounded-lg text-base font-mono tracking-widest focus:outline-none transition-all input-glow"
+                            style="background-color: #0F172A; border-color: #334155; color: #E2E8F0;">
+                        <div class="p-3 rounded-lg mt-2 border-l-4 text-sm"
+                            style="background-color: rgba(251, 191, 36, 0.1); border-color: #FBB936; color: #FBB936;">
+                            💡 Hint: Ask a current member for the passcode, or check your environment settings!
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full p-4 rounded-lg text-base font-semibold hover:-translate-y-0.5 transition-all glow-effect"
+                        style="background-color: #38BDF8; color: #0F172A;">🎉
+                        Join the Club</button>
+                </form>
+
+                <div class="text-center mt-5">
+                    <a href="/" class="font-semibold hover:underline" style="color: #38BDF8;">← Back to Home</a>
+                </div>
+    </div>
+</body>
+
+</html>

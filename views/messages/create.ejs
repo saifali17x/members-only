@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Message - Members Only Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .glow-effect:hover {
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
+        }
+
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-5" style="background-color: #0F172A;">
+    <div class="rounded-lg shadow-2xl p-10 max-w-3xl w-full" style="background-color: #1E293B;">
+        <h1 class="text-3xl font-bold mb-2" style="color: #E2E8F0;">✏️ Create New Message</h1>
+        <p class="mb-8" style="color: #94A3B8;">Share your thoughts with the community</p>
+
+        <% if (typeof error !=='undefined' && error) { %>
+            <div class="p-3 rounded-lg mb-5 border-l-4"
+                style="background-color: rgba(244, 114, 182, 0.1); color: #F472B6; border-color: #F472B6;">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <form action="/messages/new" method="POST">
+                    <div class="mb-5">
+                        <label for="title" class="block mb-2 font-medium" style="color: #E2E8F0;">Message Title</label>
+                        <input type="text" id="title" name="title"
+                            value="<%= typeof formData !== 'undefined' ? formData.title || '' : '' %>" minlength="3"
+                            maxlength="255" required autofocus
+                            class="w-full p-3 border-2 rounded-lg text-base focus:outline-none transition-all input-glow"
+                            style="background-color: #0F172A; border-color: #334155; color: #E2E8F0;">
+                        <small class="text-sm" style="color: #94A3B8;">Minimum 3 characters</small>
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="text" class="block mb-2 font-medium" style="color: #E2E8F0;">Message Content</label>
+                        <textarea id="text" name="text" minlength="10" required
+                            class="w-full p-3 border-2 rounded-lg text-base resize-y min-h-[200px] focus:outline-none transition-all input-glow"
+                            style="background-color: #0F172A; border-color: #334155; color: #E2E8F0;"><%= typeof formData !== 'undefined' ? formData.text || '' : '' %></textarea>
+                        <small class="text-sm" style="color: #94A3B8;">Minimum 10 characters</small>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <a href="/messages"
+                            class="flex-1 p-4 rounded-lg text-center font-semibold hover:-translate-y-0.5 transition-all"
+                            style="background-color: #334155; color: #E2E8F0;">Cancel</a>
+                        <button type="submit"
+                            class="flex-1 p-4 rounded-lg font-semibold hover:-translate-y-0.5 transition-all glow-effect"
+                            style="background-color: #38BDF8; color: #0F172A;">📤
+                            Post Message</button>
+                    </div>
+                </form>
+    </div>
+</body>
+
+</html>

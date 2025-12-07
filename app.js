@@ -13,7 +13,12 @@ import pool from "./db/pool.js";
 import * as queries from "./db/queries.js";
 import { checkDatabase, initDatabase } from "./db/init.js";
 
-// Import controllers
+// Import routes
+import authRoutes from "./routes/auth.js";
+import membershipRoutes from "./routes/membership.js";
+import messageRoutes from "./routes/messages.js";
+import userRoutes from "./routes/users.js";
+import adminRoutes from "./routes/admin.js";
 import * as controller from "./controllers/controller.js";
 
 // Load environment variables
@@ -29,6 +34,9 @@ const PORT = process.env.PORT || 3000;
 // View engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
 
 // Session configuration with PostgreSQL store
 const PgSession = connectPgSimple(session);
@@ -105,36 +113,11 @@ passport.deserializeUser(async (id, done) => {
 
 // Routes
 app.get("/", controller.getHome);
-
-// Auth routes
-app.get("/signup", controller.getSignup);
-app.post("/signup", controller.postSignup);
-app.get("/login", controller.getLogin);
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/login",
-  })
-);
-app.get("/logout", controller.getLogout);
-
-// Membership routes
-app.get("/join-club", controller.getJoinClub);
-app.post("/join-club", controller.postJoinClub);
-
-// Message routes
-app.get("/messages", controller.getAllMessages);
-app.get("/messages/new", controller.getCreateMessage);
-app.post("/messages/new", controller.createMessage);
-app.get("/messages/:id", controller.getMessageById);
-app.post("/messages/:id/delete", controller.deleteMessage);
-
-// User routes
-app.get("/profile", controller.getUserProfile);
-
-// Admin routes
-app.get("/admin", controller.getAdminDashboard);
+app.use("/", authRoutes);
+app.use("/", membershipRoutes);
+app.use("/messages", messageRoutes);
+app.use("/", userRoutes);
+app.use("/admin", adminRoutes);
 
 // Initialize database and start server
 const startServer = async () => {

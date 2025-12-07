@@ -1,5 +1,5 @@
 import * as queries from "../db/queries.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 // HOME CONTROLLER
 export const getHome = async (req, res) => {
@@ -27,16 +27,7 @@ export const getSignup = (req, res) => {
 
 export const postSignup = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, confirmPassword, isAdmin } =
-      req.body;
-
-    // Validate passwords match
-    if (password !== confirmPassword) {
-      return res.render("auth/signup", {
-        error: "Passwords do not match",
-        formData: req.body,
-      });
-    }
+    const { firstName, lastName, email, password, isAdmin } = req.body;
 
     // Check if email already exists
     const exists = await queries.emailExists(email);

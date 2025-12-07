@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - <%= user.first_name %>
+            <%= user.last_name %>
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .glow-effect:hover {
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
+        }
+
+        .glassmorphism {
+            backdrop-filter: blur(10px);
+            background-color: rgba(30, 41, 59, 0.8);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen" style="background-color: #0F172A;">
+    <nav class="p-5 shadow-lg glassmorphism" style="color: #E2E8F0;">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">👤 My Profile</h1>
+            <div class="flex gap-5">
+                <a href="/" class="px-4 py-2 rounded-lg transition-colors" style="color: #E2E8F0;"
+                    onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
+                    onmouseout="this.style.backgroundColor='transparent'">Home</a>
+                <a href="/messages" class="px-4 py-2 rounded-lg transition-colors" style="color: #E2E8F0;"
+                    onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
+                    onmouseout="this.style.backgroundColor='transparent'">Messages</a>
+                <% if (user.is_admin) { %>
+                    <a href="/admin" class="px-4 py-2 rounded-lg transition-colors" style="color: #E2E8F0;"
+                        onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
+                        onmouseout="this.style.backgroundColor='transparent'">Admin</a>
+                    <% } %>
+                        <a href="/logout" class="px-4 py-2 rounded-lg transition-colors" style="color: #E2E8F0;"
+                            onmouseover="this.style.backgroundColor='rgba(56, 189, 248, 0.2)'"
+                            onmouseout="this.style.backgroundColor='transparent'">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto my-10 px-5">
+        <div class="rounded-lg p-10 shadow-md mb-8" style="background-color: #1E293B;">
+            <div class="flex items-center gap-8">
+                <div class="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-semibold"
+                    style="background: linear-gradient(135deg, #38BDF8 0%, #F472B6 100%); color: #0F172A;">
+                    <%= user.first_name.charAt(0) %>
+                        <%= user.last_name.charAt(0) %>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold mb-2" style="color: #E2E8F0;">
+                        <%= user.first_name %>
+                            <%= user.last_name %>
+                    </h1>
+                    <p class="text-lg mb-4" style="color: #94A3B8;">📧 <%= user.email %>
+                    </p>
+                    <div class="flex gap-2">
+                        <% if (user.is_admin) { %>
+                            <span class="px-3 py-1 rounded-full text-sm font-semibold"
+                                style="background-color: rgba(251, 191, 36, 0.2); color: #FBB936;">⭐
+                                Admin</span>
+                            <% } %>
+                                <% if (user.is_member) { %>
+                                    <span class="px-3 py-1 rounded-full text-sm font-semibold"
+                                        style="background-color: rgba(34, 197, 94, 0.2); color: #4ADE80;">✅
+                                        Member</span>
+                                    <% } else { %>
+                                        <span class="px-3 py-1 rounded-full text-sm font-semibold"
+                                            style="background-color: rgba(100, 116, 139, 0.2); color: #94A3B8;">👤
+                                            Regular User</span>
+                                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <% if (!user.is_member) { %>
+            <div class="border-2 rounded-lg p-5 mb-8 text-center"
+                style="background-color: rgba(251, 191, 36, 0.1); border-color: #FBB936;">
+                <h3 class="text-xl font-bold mb-2" style="color: #FBB936;">🔐 Become a Member!</h3>
+                <p class="mb-4" style="color: #FBB936;">Join the club to see message authors and unlock exclusive
+                    features</p>
+                <a href="/join-club"
+                    class="inline-block px-6 py-3 rounded-lg font-semibold hover:-translate-y-0.5 transition-all glow-effect"
+                    style="background-color: #38BDF8; color: #0F172A;">Join
+                    Now</a>
+            </div>
+            <% } %>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+                    <div class="rounded-lg p-8 shadow-md text-center" style="background-color: #1E293B;">
+                        <div class="text-5xl font-bold mb-2" style="color: #38BDF8;">
+                            <%= messageCount %>
+                        </div>
+                        <div class="font-medium" style="color: #94A3B8;">Messages Posted</div>
+                    </div>
+                    <div class="rounded-lg p-8 shadow-md text-center" style="background-color: #1E293B;">
+                        <div class="text-5xl font-bold mb-2" style="color: #F472B6;">
+                            <%= new Date(user.joined_date).toLocaleDateString('en-US', { month: 'short' ,
+                                year: 'numeric' }) %>
+                        </div>
+                        <div class="font-medium" style="color: #94A3B8;">Member Since</div>
+                    </div>
+                    <div class="rounded-lg p-8 shadow-md text-center" style="background-color: #1E293B;">
+                        <div class="text-5xl font-bold mb-2" style="color: #38BDF8;">
+                            <%= user.is_member ? 'Yes' : 'No' %>
+                        </div>
+                        <div class="font-medium" style="color: #94A3B8;">Club Member</div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mb-5">
+                    <h2 class="text-2xl font-bold" style="color: #E2E8F0;">My Messages</h2>
+                    <a href="/messages/new"
+                        class="px-6 py-3 rounded-lg font-semibold hover:-translate-y-0.5 transition-all glow-effect"
+                        style="background-color: #38BDF8; color: #0F172A;">✏️
+                        New Message</a>
+                </div>
+
+                <% if (messages && messages.length> 0) { %>
+                    <div class="grid gap-5">
+                        <% messages.forEach(message=> { %>
+                            <div class="rounded-lg p-6 shadow-md" style="background-color: #1E293B;">
+                                <h3 class="text-xl font-bold mb-2" style="color: #E2E8F0;">
+                                    <%= message.title %>
+                                </h3>
+                                <p class="leading-relaxed mb-2" style="color: #94A3B8;">
+                                    <%= message.text %>
+                                </p>
+                                <p class="text-sm" style="color: #64748B;">
+                                    Posted on <%= new Date(message.created_at).toLocaleDateString('en-US', {
+                                        month: 'long' , day: 'numeric' , year: 'numeric' }) %>
+                                </p>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <% } else { %>
+                        <div class="text-center py-20 rounded-lg" style="background-color: #1E293B;">
+                            <h2 class="text-2xl font-bold mb-2" style="color: #64748B;">No messages yet</h2>
+                            <p style="color: #64748B;">You haven't posted any messages. Share your first thought!</p>
+                        </div>
+                        <% } %>
+    </div>
+</body>
+
+</html>
